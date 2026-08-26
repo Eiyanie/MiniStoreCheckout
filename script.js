@@ -44,6 +44,16 @@ function formatPeso(amount) {
   
     return fee;
   }
+
+  // Internal helper (not one of the three required functions) - returns
+  // the clean whole-number discount percentage for display purposes,
+  // avoiding floating-point artifacts from back-dividing discountAmount / subtotal.
+  function getDiscountRatePercent(subtotal) {
+    if (subtotal >= 5000) return 10;
+    if (subtotal >= 3000) return 7;
+    if (subtotal >= 1000) return 5;
+    return 0;
+  }
   
 /* =========================================================
    BROWSER-ONLY CODE
@@ -182,7 +192,7 @@ function initApp() {
 
     // ---- Use the required calculation functions ---- //
     const discountAmount = calculateDiscount(subtotal);
-    const discountRate = subtotal > 0 ? (discountAmount / subtotal) * 100 : 0;
+    const discountRate = getDiscountRatePercent(subtotal);
 
     const deliveryOption = Number(deliveryOptionSelect.value);
     const deliveryFee = getDeliveryFee(deliveryOption);
@@ -205,40 +215,33 @@ function initApp() {
     const finalAmount = subtotal - discountAmount + deliveryFee;
 
     // ---- Build and display the order summary (template literals) ---- //
-    let productRowsHTML = "";
+    // Matches the required sample output format: labeled lines with
+    // "Label: value" pairs, an ORDER SUMMARY heading, and one
+    // Price/Quantity/Amount block per product.
+    let productLinesHTML = "";
     products.forEach((product, index) => {
-      productRowsHTML += `
-        <tr>
-          <td>${index + 1}. ${product.name}</td>
-          <td>${formatPeso(product.price)}</td>
-          <td>${product.quantity}</td>
-          <td>${formatPeso(product.amount)}</td>
-        </tr>
+      productLinesHTML += `
+        <div class="product-line">
+          <p class="product-title">${index + 1}. ${product.name}</p>
+          <p>Price: ${formatPeso(product.price)}</p>
+          <p>Quantity: ${product.quantity}</p>
+          <p>Amount: ${formatPeso(product.amount)}</p>
+        </div>
       `;
     });
 
     const summaryHTML = `
-      <p><strong>Customer:</strong> ${customerName}</p>
-      <table>
-        <thead>
-          <tr>
-            <th>Product</th>
-            <th>Price</th>
-            <th>Qty</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${productRowsHTML}
-        </tbody>
-      </table>
+      <p>Customer: ${customerName}</p>
 
-      <div class="totals-row"><span>Subtotal</span><span>${formatPeso(subtotal)}</span></div>
-      <div class="totals-row"><span>Discount Rate</span><span>${discountRate}%</span></div>
-      <div class="totals-row"><span>Discount Amount</span><span>-${formatPeso(discountAmount)}</span></div>
-      <div class="totals-row"><span>Delivery Type</span><span>${deliveryType}</span></div>
-      <div class="totals-row"><span>Delivery Fee</span><span>+${formatPeso(deliveryFee)}</span></div>
-      <div class="totals-row final"><span>Final Amount</span><span>${formatPeso(finalAmount)}</span></div>
+      ${productLinesHTML}
+
+      <h3>ORDER SUMMARY</h3>
+      <p>Subtotal: ${formatPeso(subtotal)}</p>
+      <p>Discount Rate: ${discountRate}%</p>
+      <p>Discount Amount: ${formatPeso(discountAmount)}</p>
+      <p>Delivery Type: ${deliveryType}</p>
+      <p>Delivery Fee: ${formatPeso(deliveryFee)}</p>
+      <p>Final Amount: ${formatPeso(finalAmount)}</p>
 
       <p class="thank-you">Thank you for shopping with us, ${customerName}!</p>
     `;
