@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Store Checkout System</title>
+  <style>
+    body{
+        font-family: "Segoe UI", Arial, sans-serif;
+        background-color: #f4f6f8;
+        color: #222;
+        margin: 0;
+        padding: 40px 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 600px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 25px 30px;
+    }
+    
+    .hidden { display: none; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h6>LABORATORY ACTIVITY #3</h6>
+    <h1>MINI STORE CHECKOUT SYSTEM</h1>
+    <p class="subtitle">Fill out the form below to compute your order total.</p>
+
+    <!-- Customer & Product Count -->
+    <div class="card">
+      <h2>Customer & Order Info</h2>
+
+      <label for="customerName">Customer Name</label>
+      <input type="text" id="customerName" placeholder="e.g. Juan Dela Cruz" />
+<br>
+      <label for="productCount">Number of Products</label>
+      <input type="number" id="productCount" min="1" placeholder="e.g. 2" />
+    </div>
+
+    <!-- Product Fields (generated dynamically by a for loop) -->
+    <div class="card">
+      <h2>Product Details</h2>
+      <div id="productsContainer">
+        <p class="placeholder-text">Enter the number of products above to add product fields here.</p>
+      </div>
+    </div>
+
+    <!-- Delivery Option -->
+    <div class="card">
+      <h2>Delivery Option</h2>
+      <label for="deliveryOption">Delivery Option</label>
+      <select id="deliveryOption">
+        <option value="1">Store Pickup — ₱0.00</option>
+        <option value="2">Standard Delivery — ₱80.00</option>
+        <option value="3">Express Delivery — ₱150.00</option>
+      </select>
+
+      <div id="validationMessage"></div>
+
+      <button id="calculateBtn">Calculate Order</button>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="card hidden" id="summaryCard">
+      <h2>Order Summary</h2>
+      <div id="orderSummary"></div>
+      <button class="secondary" id="resetBtn">Start New Order</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
