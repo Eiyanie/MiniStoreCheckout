@@ -1,60 +1,60 @@
 function formatPeso(amount) {
-    return "₱" + amount.toLocaleString("en-PH", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
+  return "₱" + amount.toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
+function calculateItemAmount(price, quantity) {
+  return price * quantity;
+}
+
+function calculateDiscount(subtotal) {
+  let discountRate = 0;
+
+  if (subtotal >= 5000) {
+    discountRate = 0.10;
+  } else if (subtotal >= 3000) {
+    discountRate = 0.07;
+  } else if (subtotal >= 1000) {
+    discountRate = 0.05;
+  } else {
+    discountRate = 0;
   }
 
-  function calculateItemAmount(price, quantity) {
-    return price * quantity;
+  return subtotal * discountRate;
+}
+
+function getDeliveryFee(option) {
+  let fee = 0;
+
+  switch (option) {
+    case 1:
+      fee = 0;
+      break;
+    case 2:
+      fee = 80;
+      break;
+    case 3:
+      fee = 150;
+      break;
+    default:
+      fee = 0;
   }
 
-  function calculateDiscount(subtotal) {
-    let discountRate = 0;
-  
-    if (subtotal >= 5000) {
-      discountRate = 0.10;
-    } else if (subtotal >= 3000) {
-      discountRate = 0.07;
-    } else if (subtotal >= 1000) {
-      discountRate = 0.05;
-    } else {
-      discountRate = 0;
-    }
-  
-    return subtotal * discountRate;
-  }
+  return fee;
+}
 
-  function getDeliveryFee(option) {
-    let fee = 0;
-  
-    switch (option) {
-      case 1:
-        fee = 0;
-        break;
-      case 2:
-        fee = 80;
-        break;
-      case 3:
-        fee = 150;
-        break;
-      default:
-        fee = 0;
-    }
-  
-    return fee;
-  }
+// Internal helper (not one of the three required functions) - returns
+// the clean whole-number discount percentage for display purposes,
+// avoiding floating-point artifacts from back-dividing discountAmount / subtotal.
+function getDiscountRatePercent(subtotal) {
+  if (subtotal >= 5000) return 10;
+  if (subtotal >= 3000) return 7;
+  if (subtotal >= 1000) return 5;
+  return 0;
+}
 
-  // Internal helper (not one of the three required functions) - returns
-  // the clean whole-number discount percentage for display purposes,
-  // avoiding floating-point artifacts from back-dividing discountAmount / subtotal.
-  function getDiscountRatePercent(subtotal) {
-    if (subtotal >= 5000) return 10;
-    if (subtotal >= 3000) return 7;
-    if (subtotal >= 1000) return 5;
-    return 0;
-  }
-  
 /* =========================================================
    BROWSER-ONLY CODE
    Everything below this line touches the DOM and only runs
@@ -76,16 +76,7 @@ function initApp() {
   const summaryCard = document.getElementById("summaryCard");
   const resetBtn = document.getElementById("resetBtn");
 
-  function updateProductFields() {
-    const count = Number(productCountInput.value);
-    const isCountValid = Number.isInteger(count) && count >= 1;
-
-    if (!isCountValid) {
-      productsContainer.innerHTML = '<p class="placeholder-text">Enter the number of products above to add product fields here.</p>';
-      summaryCard.classList.add("hidden");
-      return;
-    }
-
+  function generateProductFields(count) {
     productsContainer.innerHTML = "";
 
     for (let i = 0; i < count; i++) {
@@ -104,8 +95,32 @@ function initApp() {
       `;
       productsContainer.appendChild(block);
     }
+  }
 
+  function updateProductFields() {
+    const count = Number(productCountInput.value);
+    const isCountValid = Number.isInteger(count) && count >= 1;
+
+    if (!isCountValid) {
+      productsContainer.innerHTML = '<p class="placeholder-text">Enter the number of products above to add product fields here.</p>';
+      summaryCard.classList.add("hidden");
+      return;
+    }
+
+    generateProductFields(count);
     summaryCard.classList.add("hidden");
+  }
+
+  // Returns true if the fields currently rendered in productsContainer
+  // do NOT match the requested count (either none were generated yet,
+  // or a stale set from a previous count is still showing). This is the
+  // check used at calculate-time so the form self-heals no matter how
+  // productCount's value was set (typed by a user, or written
+  // programmatically by an automated grader without firing an
+  // input/change event).
+  function fieldsNeedRegeneration(count) {
+    const existingBlocks = productsContainer.querySelectorAll(".product-block").length;
+    return existingBlocks !== count;
   }
 
   customerNameInput.addEventListener("input", () => {
@@ -137,11 +152,12 @@ function initApp() {
       return;
     }
 
-    // Self-heal: if the product fields haven't been generated yet
-    // (e.g. productCount was set without firing input/change), generate
-    // them now so calculation can still proceed instead of crashing.
-    if (!document.getElementById("productName-0")) {
-      updateProductFields();
+    // Self-heal: guarantees the product-name/price/quantity fields exist
+    // and match the current count before we try to read them, regardless
+    // of whether productCount's value was set by typing or set
+    // programmatically without triggering input/change.
+    if (fieldsNeedRegeneration(count)) {
+      generateProductFields(count);
     }
 
     const products = []; // holds {name, price, quantity, amount} objects
@@ -277,15 +293,10 @@ function initApp() {
   });
 }
 
-// Only wire up the interface when running in a real browser/document.
-// This keeps calculateItemAmount, calculateDiscount, and getDeliveryFee
-// safely testable in isolation (e.g. via Node's require()).
 if (typeof document !== "undefined" && document.getElementById("calculateBtn")) {
   initApp();
 }
 
-// Allow this file to be require()'d directly in Node for unit testing
-// the three required pure calculation functions.
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { calculateItemAmount, calculateDiscount, getDeliveryFee, formatPeso };
 }

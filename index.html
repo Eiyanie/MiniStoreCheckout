@@ -5,27 +5,165 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mini Store Checkout System</title>
   <style>
-    body{
-        font-family: "Segoe UI", Arial, sans-serif;
-        background-color: #f4f6f8;
-        color: #222;
-        margin: 0;
-        padding: 40px 20px;
-        display: flex;
-        justify-content: center;
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: #f4f6f8;
+      color: #222;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
     }
 
     .container {
-        width: 100%;
-        max-width: 600px;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        padding: 25px 30px;
+      width: 100%;
+      max-width: 600px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 25px 30px;
     }
-    
-    .hidden { display: none; }
 
+    h6 {
+      margin: 0;
+      color: #888;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    h1 {
+      margin: 4px 0 4px;
+      font-size: 1.6rem;
+      color: #1a2b3c;
+    }
+
+    .subtitle {
+      margin: 0 0 20px;
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .card {
+      border: 1px solid #e2e6ea;
+      border-radius: 8px;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+      background-color: #fafbfc;
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 1.05rem;
+      color: #1a2b3c;
+    }
+
+    label {
+      display: block;
+      margin: 10px 0 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 10px;
+      border: 1px solid #ccd2d8;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    .placeholder-text {
+      color: #999;
+      font-style: italic;
+      font-size: 0.9rem;
+      margin: 4px 0;
+    }
+
+    .product-block {
+      border: 1px solid #dfe3e8;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      background-color: #fff;
+    }
+
+    .product-block h3 {
+      margin: 0 0 6px;
+      font-size: 0.95rem;
+      color: #1a2b3c;
+    }
+
+    #validationMessage {
+      color: #c0392b;
+      font-size: 0.85rem;
+      min-height: 1.1em;
+      margin-top: 10px;
+    }
+
+    button {
+      margin-top: 14px;
+      width: 100%;
+      padding: 10px 16px;
+      background-color: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    button.secondary {
+      background-color: #fff;
+      color: #2563eb;
+      border: 1px solid #2563eb;
+    }
+
+    button.secondary:hover {
+      background-color: #eff4ff;
+    }
+
+    .product-line {
+      border-bottom: 1px solid #eee;
+      padding: 8px 0;
+    }
+
+    .product-line p {
+      margin: 2px 0;
+      font-size: 0.9rem;
+    }
+
+    .product-title {
+      font-weight: 600;
+      color: #1a2b3c;
+    }
+
+    #orderSummary h3 {
+      margin: 14px 0 6px;
+      color: #1a2b3c;
+    }
+
+    #orderSummary p {
+      margin: 4px 0;
+    }
+
+    .thank-you {
+      margin-top: 14px;
+      font-weight: 600;
+      color: #2563eb;
+    }
+
+    .hidden { display: none; }
   </style>
 </head>
 <body>
@@ -40,7 +178,7 @@
 
       <label for="customerName">Customer Name</label>
       <input type="text" id="customerName" placeholder="e.g. Juan Dela Cruz" />
-<br>
+
       <label for="productCount">Number of Products</label>
       <input type="number" id="productCount" min="1" placeholder="e.g. 2" />
     </div>
